@@ -1,0 +1,6 @@
+[submodule "tests/wasm2c-test"]
+	path = tests/wasm2c-test
+	url = git@github.com:ZiangTian/wasm2c-spike-test.git
+[submodule "tests/SepStack-test"]
+	path = tests/SepStack-test
+	url = git@github.com:ZiangTian/SepStack-test.git
