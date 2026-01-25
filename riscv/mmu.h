@@ -350,6 +350,21 @@ public:
     return refill_icache(addr, entry);
   }
 
+  /*
+            // HFI code region check
+          if ((state.hfi_status->read() & HFI_ENABLED_MASK)) {
+            std::cout << "HFI: Checking PC 0x" << std::hex << pc << " against HFI code region..." << std::dec << std::endl;
+            if (state.hfi_permissions->read() & 0b01000000) { // hfi code region enabled
+              std::cout << "HFI: Checking PC 0x" << std::hex << pc << " against HFI code region..." << std::dec << std::endl;
+              if ((!state.hfi_permissions->read() & 0b10000000) || // execute denied
+                  (pc & state.hfi_code_mask->read() != state.hfi_code_base->read()) // pc not in region
+                ) {
+                  throw trap_illegal_instruction(fetch.insn.bits());
+              }
+            }
+          }
+  */
+
   inline insn_fetch_t load_insn(reg_t addr)
   {
     return refill_icache(addr, &icache[icache_index(addr)])->data;

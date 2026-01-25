@@ -191,6 +191,38 @@ struct state_t
 
   bool serialized; // whether timer CSRs are in a well-defined state
 
+  // hfi states
+  // [-, 60 bit exit pc, 2 bit exit reason, 1 bit enabled]
+  csr_t_p hfi_status;
+  csr_t_p hfi_options; // [serialize, redirect_syscall, redirect_exits, lock_regions]
+
+  // permission settings
+  // 64 bits
+  // 0-3: explicit region 1 [write, read, enabled]
+  // 4-6: implicit region 1 [write, read, enabled]
+  // 7-8: code region [execute, enabled]
+  // rest is reserved
+  csr_t_p hfi_permissions;
+
+  // hfi implicit region settings
+  csr_t_p hfi_implicit_base_1;
+  csr_t_p hfi_implicit_mask_1;
+
+  // hfi code region settings
+  csr_t_p hfi_code_base;
+  csr_t_p hfi_code_mask;
+
+  // hfi explicit region settings
+  csr_t_p hfi_explicit_base_1;
+  csr_t_p hfi_explicit_bound_1;
+
+  // current region under configuration
+  csr_t_p hfi_current_region;
+
+  // hfi control flow / fault registers
+  csr_t_p hfi_exit_handler;
+  csr_t_p hfi_cause;
+
   // When true, execute a single instruction and then enter debug mode.  This
   // can only be set by executing dret.
   enum {

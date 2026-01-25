@@ -126,6 +126,7 @@ void state_t::reset(processor_t* const proc, reg_t max_isa)
   elp = elp_t::NO_LP_EXPECTED;
 
   critical_error = false;
+  // hfi_enabled = false;  // Initialize HFI state to disabled
 
   csr_init(proc, max_isa);
 }

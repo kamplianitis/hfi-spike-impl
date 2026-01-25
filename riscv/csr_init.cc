@@ -560,4 +560,18 @@ void state_t::csr_init(processor_t* const proc, reg_t max_isa)
     add_hypervisor_csr(CSR_HVICTL, hvictl);
     add_hypervisor_csr(CSR_VSTOPI, vstopi);
   }
+
+  // HFI (Hardware Flow Isolation) status CSR
+  add_csr(CSR_HFISTATUS, hfi_status = std::make_shared<basic_csr_t>(proc, CSR_HFISTATUS, 0));
+  add_csr(CSR_HFIOPTIONS, hfi_options = std::make_shared<basic_csr_t>(proc, CSR_HFIOPTIONS, 0));
+  add_csr(CSR_HFIPERMISSIONS, hfi_permissions = std::make_shared<basic_csr_t>(proc, CSR_HFIPERMISSIONS, 0));
+  add_csr(CSR_HFIIMPLICITBASE1, hfi_implicit_base_1 = std::make_shared<basic_csr_t>(proc, CSR_HFIIMPLICITBASE1, 0));
+  add_csr(CSR_HFIIMPLICITMASK1, hfi_implicit_mask_1 = std::make_shared<basic_csr_t>(proc, CSR_HFIIMPLICITMASK1, 0));
+  add_csr(CSR_HFIEXPLICITBASE1, hfi_explicit_base_1 = std::make_shared<basic_csr_t>(proc, CSR_HFIEXPLICITBASE1, 0));
+  add_csr(CSR_HFIEXPLICITBOUND1, hfi_explicit_bound_1 = std::make_shared<basic_csr_t>(proc, CSR_HFIEXPLICITBOUND1, 0));
+  add_csr(CSR_HFICURRENTREGION, hfi_current_region = std::make_shared<basic_csr_t>(proc, CSR_HFICURRENTREGION, 0));
+  add_csr(CSR_HFICODEBASE, hfi_code_base = std::make_shared<basic_csr_t>(proc, CSR_HFICODEBASE, 0));
+  add_csr(CSR_HFICODEMASK, hfi_code_mask = std::make_shared<basic_csr_t>(proc, CSR_HFICODEMASK, 0));
+  add_csr(CSR_HFI_EXITHANDLER, hfi_exit_handler = std::make_shared<basic_csr_t>(proc, CSR_HFI_EXITHANDLER, 0));
+  add_csr(CSR_HFICAUSE, hfi_cause = std::make_shared<basic_csr_t>(proc, CSR_HFICAUSE, 0));
 }

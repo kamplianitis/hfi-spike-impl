@@ -204,7 +204,8 @@ static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t f
 bool processor_t::slow_path() const
 {
   return debug || state.single_step != state.STEP_NONE || state.debug_mode ||
-         log_commits_enabled || histogram_enabled || in_wfi || check_triggers_icount;
+         log_commits_enabled || histogram_enabled || in_wfi || check_triggers_icount ||
+         (state.hfi_status->read() & HFI_ENABLED_MASK);
 }
 
 // fetch/decode/execute loop
@@ -282,6 +283,21 @@ void processor_t::step(size_t n)
 
           in_wfi = false;
           insn_fetch_t fetch = mmu->load_insn(pc);
+          // std::cout << "Fetched instruction 0x" << std::hex << fetch.insn.bits() << " from PC 0x" << pc << std::dec << std::endl;
+          // HFI code region check
+          if ((state.hfi_status->read() & HFI_ENABLED_MASK) && (state.prv == PRV_U)) {
+            std::cout << "HFI: Checking PC 0x" << std::hex << pc << " against HFI code region..." << std::dec << std::endl;
+            if (state.hfi_permissions->read() & 0b01000000) { // hfi code region enabled
+              std::cout << "HFI Checking PC:" << std::hex << pc << " perm: " << (int)(state.hfi_permissions->read()) << " base: " << state.hfi_code_base->read() << " mask: " << state.hfi_code_mask->read() << std::dec << std::endl;  
+              if (!(state.hfi_permissions->read() & 0b10000000) || // execute denied
+                  (pc & state.hfi_code_mask->read() != state.hfi_code_base->read()) // pc not in region
+                ) {
+                  std::cout << "HFI: Illegal instruction fetch at PC 0x" << std::hex << pc << std::dec << std::endl;
+                  throw trap_illegal_instruction(fetch.insn.bits());
+              }
+            }
+          }
+
           if (debug && !state.serialized)
             disasm(fetch.insn);
           pc = execute_insn_logged(this, pc, fetch);

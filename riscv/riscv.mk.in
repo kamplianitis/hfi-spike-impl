@@ -480,6 +480,32 @@ riscv_insn_ext_k = \
        sm4ed \
        sm4ks
 
+riscv_insn_ext_hfi = \
+	hver \
+	henter \
+	hentertarg \
+	hexit \
+	hstbs \
+	hstbd \
+	hstprm \
+	hstconfigregion \
+	hlb \
+	hlbu \
+	hlh \
+	hlhu \
+	hlw \
+	hlwu \
+	hld \
+	hsb \
+	hsh \
+	hsw \
+	hsd \
+	hgtbs \
+	hgtbd \
+	hgtprm \
+	hstxhdlr \
+	hgtxhdlr 
+
 riscv_insn_ext_v_alu_int = \
 	vaadd_vv \
 	vaaddu_vv \
@@ -1170,6 +1196,7 @@ riscv_insn_list = \
 	$(riscv_insn_ext_zcmop) \
 	$(riscv_insn_ext_zicfilp) \
 	$(riscv_insn_ext_zicfiss) \
+	$(riscv_insn_ext_hfi) \
 
 riscv_gen_srcs = $(addsuffix .cc,$(riscv_insn_list))
 
