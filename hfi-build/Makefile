@@ -12,11 +12,11 @@ CC := $(CROSS_COMPILE)gcc
 CXX := $(CROSS_COMPILE)g++
 
 SPIKE ?= spike
-SPIKE_ISA ?= rv64gc_zihfi
+SPIKE_ISA ?= rv64gc_xhfi
 SPIKE_SRC_DIR ?= $(ROOT_DIR)
 SPIKE_BUILD_DIR ?= $(SPIKE_SRC_DIR)/build
 SUDO ?= sudo
-PK ?= $(HOME)/riscv-tools/riscv64-linux-gnu/bin/pk
+PK ?= $(shell if [ -x /opt/riscv/riscv64-linux-gnu/bin/pk ]; then echo /opt/riscv/riscv64-linux-gnu/bin/pk; else echo $(HOME)/riscv-tools/riscv64-linux-gnu/bin/pk; fi)
 
 RUN_SPIKE = $(SPIKE) --isa=$(SPIKE_ISA) $(PK)
 
