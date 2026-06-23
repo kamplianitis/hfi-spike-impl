@@ -1,0 +1,7 @@
+.git
+build/
+hfi-build/mybuildout/
+hfi-build/riscv-tools/
+autom4te.cache/
+*.o
+*.d
