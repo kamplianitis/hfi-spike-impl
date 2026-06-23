@@ -1,34 +1,57 @@
 .PHONY: build build-tests spike spike-clean test-henter test-wasm2c test-hello test-sepstack
 .DEFAULT_GOAL := build
 
-PARALLEL_COUNT=16
-EXAMPLE_FLAGS=-O0 -g
-PK := $(HOME)/riscv-tools/riscv64-linux-gnu/bin/pk
+BUILD_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+ROOT_DIR := $(abspath $(BUILD_DIR)/..)
+OUT_DIR ?= $(BUILD_DIR)/mybuildout
 
-RUN_SPIKE=spike --isa=rv64gc_zihfi $(PK)
+JOBS ?= $(shell nproc 2>/dev/null || echo 4)
+EXAMPLE_FLAGS ?= -O0 -g
+CROSS_COMPILE ?= riscv64-linux-gnu-
+CC := $(CROSS_COMPILE)gcc
+CXX := $(CROSS_COMPILE)g++
 
-spike-clean:
-		cd ~/codes/spike-proj/riscv-isa-sim/build && make clean && ~/codes/spike-proj/riscv-isa-sim/configure --prefix=$(RISCV)
+SPIKE ?= spike
+SPIKE_ISA ?= rv64gc_zihfi
+SPIKE_SRC_DIR ?= $(ROOT_DIR)
+SPIKE_BUILD_DIR ?= $(SPIKE_SRC_DIR)/build
+SUDO ?= sudo
+PK ?= $(HOME)/riscv-tools/riscv64-linux-gnu/bin/pk
 
-spike:
-		cd ~/codes/spike-proj/riscv-isa-sim/build && make -j4 && sudo make install
+RUN_SPIKE = $(SPIKE) --isa=$(SPIKE_ISA) $(PK)
 
-mybuildout/test-henter: ../tests/test-henter.cpp ../tests/hfi.S
-		riscv64-linux-gnu-g++ $^ $(EXAMPLE_FLAGS) -static -o $@
+build: build-tests
 
-mybuildout/test-hello: ../tests/hello.c
-		riscv64-linux-gnu-gcc $^ $(EXAMPLE_FLAGS) -static -o $@
+$(SPIKE_BUILD_DIR):
+		mkdir -p $@
 
-build-tests: mybuildout/test-henter mybuildout/test-hello
+spike-clean: | $(SPIKE_BUILD_DIR)
+		$(MAKE) -C $(SPIKE_BUILD_DIR) clean
+		cd $(SPIKE_BUILD_DIR) && $(SPIKE_SRC_DIR)/configure --prefix=$(RISCV)
+
+spike: | $(SPIKE_BUILD_DIR)
+		$(MAKE) -C $(SPIKE_BUILD_DIR) -j$(JOBS)
+		$(SUDO) $(MAKE) -C $(SPIKE_BUILD_DIR) install
+
+$(OUT_DIR):
+		mkdir -p $@
+
+$(OUT_DIR)/test-henter: $(ROOT_DIR)/tests/test-henter.cpp $(ROOT_DIR)/tests/hfi.S | $(OUT_DIR)
+		$(CXX) $^ $(EXAMPLE_FLAGS) -static -o $@
+
+$(OUT_DIR)/test-hello: $(ROOT_DIR)/tests/hello.c | $(OUT_DIR)
+		$(CC) $^ $(EXAMPLE_FLAGS) -static -o $@
+
+build-tests: $(OUT_DIR)/test-henter $(OUT_DIR)/test-hello
 
 test-henter: build-tests
-		cd .. && $(RUN_SPIKE) mybuild/mybuildout/test-henter
+		cd $(ROOT_DIR) && $(RUN_SPIKE) $(OUT_DIR)/test-henter
 
 test-wasm2c:
-		cd .. && $(RUN_SPIKE) tests/wasm2c-test/hfi-test/riscv_test
+		cd $(ROOT_DIR) && $(RUN_SPIKE) $(ROOT_DIR)/tests/wasm2c-test/hfi-test/riscv_test
 
 test-hello: build-tests
-		cd .. && $(RUN_SPIKE) mybuild/mybuildout/test-hello
+		cd $(ROOT_DIR) && $(RUN_SPIKE) $(OUT_DIR)/test-hello
 
 test-sepstack:
-		cd .. && $(RUN_SPIKE) tests/SepStack-test/build/sepstack-riscv-test
+		cd $(ROOT_DIR) && $(RUN_SPIKE) $(ROOT_DIR)/tests/SepStack-test/build/sepstack-riscv-test
