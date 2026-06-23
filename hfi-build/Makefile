@@ -3,7 +3,7 @@
 
 BUILD_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 ROOT_DIR := $(abspath $(BUILD_DIR)/..)
-OUT_DIR ?= $(BUILD_DIR)/mybuildout
+OUT_DIR ?= $(BUILD_DIR)/hfibuildout
 
 JOBS ?= $(shell nproc 2>/dev/null || echo 4)
 EXAMPLE_FLAGS ?= -O0 -g

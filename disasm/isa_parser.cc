@@ -443,6 +443,9 @@ isa_parser_t::isa_parser_t(const char* str, const char *priv)
     } else if (ext_str == "ssaia") {
       extension_table[EXT_SSAIA] = true;
       extension_table[EXT_SSCSRIND] = true;
+    } else if (ext_str == "xhfi") {
+      extension_table['X'] = true;
+      extension_table[EXT_HFI] = true;
     } else if (ext_str[0] == 'x') {
       extension_table['X'] = true;
       if (ext_str.size() == 1) {

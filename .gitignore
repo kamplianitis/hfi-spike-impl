@@ -1,5 +1,5 @@
 build/
-hfi-build/mybuildout/
+hfi-build/hfibuildout/
 hfi-build/riscv-tools/
 *.gch
 autom4te.cache/
