@@ -1,4 +1,6 @@
 build/
+hfi-build/mybuildout/
+hfi-build/riscv-tools/
 *.gch
 autom4te.cache/
 .*.swp
