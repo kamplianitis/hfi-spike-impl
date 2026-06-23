@@ -1,4 +1,4 @@
-.PHONY: build
+.PHONY: build build-tests spike spike-clean test-henter test-wasm2c test-hello test-sepstack
 .DEFAULT_GOAL := build
 
 PARALLEL_COUNT=16
