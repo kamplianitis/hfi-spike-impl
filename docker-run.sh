@@ -34,7 +34,7 @@ docker build \
 
 docker run --rm \
   "${docker_tty[@]}" \
-  -v "$repo_root:/workspace" \
+  -v "$repo_root:/workspace:z" \
   -w /workspace \
   "${docker_env[@]}" \
   "$image" \
